@@ -8,9 +8,7 @@ dependencies:
   - python=3.11
   - pip
   - pandas
-  - plotly
   - jupyterlab
   - ipykernel
   - pip:
-      - dash
-      - dash-bootstrap-components
+      - shiny
