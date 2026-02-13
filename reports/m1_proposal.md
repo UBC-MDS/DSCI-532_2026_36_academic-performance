@@ -6,11 +6,11 @@
 >
 > 
 
-## Section 2: Description of the Data
+## Description of the Data
 
 > 
 
-## Section 3: Research Questions & Usage Scenarios
+## Research Questions & Usage Scenarios
 
 ### Usage Scenario
 > Jane is a concerned parent of a high school student, and she wants to support her son's education and academic performance but is not sure if she should focus more on hiring tutors or enforcing strict bedtimes.
@@ -49,14 +49,14 @@
 > **Motivation:** ...I want to see if appointments on Mondays or Fridays are missed more often...
 > **Outcome:** ...so I can optimize the scheduling grid.
 
-## Section 4: Exploratory Data Analysis
+## Exploratory Data Analysis
 
 >
 > **Analysis:** To address User Story 1, we analyzed ...
 >
 > **Reflection:** ...
 
-## Section 5: App Sketch & Description
+## App Sketch & Description
 
 ![Dashboard](../img/sketch.png "App Sketch")
 
