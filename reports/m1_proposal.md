@@ -13,16 +13,17 @@
 ## Section 3: Research Questions & Usage Scenarios
 
 ### Usage Scenario
-> 
+> Jane is a concerned parent of a high school student, and she wants to support her son's education and academic performance but is not sure if she should focus more on hiring tutors or enforcing strict bedtimes.
 >
+> Jane accesses the dashboard of academic performance and navigates to the "Lifestyle vs. Performance" tab. She uses the filters to select students with high `parental_involvement` to see a relevant baseline. She interacts with a scatter plot comparing sleep_hours against exam_score. She notices a trend where students getting 8+ hours of sleep consistently outperform those getting less than 6, regardless of access_to_resources.
 > 
->
+> Jane decides to prioritize an earlier curfew for her child rather than purchasing expensive extra resources, data-backing her parenting decision.
 > 
 
 ### User Stories
 
 > **User Story 1:**
-> 
+> As a parent, I want to visualize the correlation between hours of sleep and final grades in order to determine if enforcing a stricter bedtime is a more effective strategy than increasing study hours.
 >
 > **User Story 2:**
 > 
@@ -50,11 +51,10 @@
 
 ## Section 4: Exploratory Data Analysis
 
-> *To address User Story 1 (...), we analyzed ...*
 >
-> **Analysis:** 
+> **Analysis:** To address User Story 1, we analyzed ...
 >
-> **Reflection:** 
+> **Reflection:** ...
 
 ## Section 5: App Sketch & Description
 
