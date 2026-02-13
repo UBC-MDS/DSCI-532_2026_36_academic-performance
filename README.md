@@ -1,9 +1,9 @@
 # DSCI-532_2026_36_academic-performance
 # Academic Performance Dashboard
 
-This dashboard explores the Student Academic Performance dataset and provides interactive visualizations to support data exploration and decision-making.
+This project develops an interactive dashboard using **Shiny for Python** to explore factors associated with student academic performance.
 
-The application allows users to examine academic, behavioral, and demographic factors that may influence student performance. The goal is to create a human-centered interactive tool for understanding patterns in student outcomes.
+The goal is to create a human-centered, interactive decision-support tool that enables users to explore patterns in student outcomes through filtering and visualization.
 
 ---
 
@@ -11,9 +11,9 @@ The application allows users to examine academic, behavioral, and demographic fa
 
 DSCI-532_2026_36_academic-performance/
 
-- src/                # Dash application (app.py)
+- src/                # Shiny application (app.py)
 - data/raw/           # Raw dataset
-- notebooks/          # EDA notebooks
+- notebooks/          # Exploratory Data Analysis (EDA)
 - reports/            # Proposal document
 - img/                # Dashboard sketch
 - environment.yml     # Project dependencies
@@ -25,7 +25,7 @@ DSCI-532_2026_36_academic-performance/
 
 ### 1. Clone the repository
 
-git clone <repo-link>  
+git clone https://github.com/UBC-MDS/DSCI-532_2026_36_academic-performance.git  
 cd DSCI-532_2026_36_academic-performance
 
 ### 2. Create the conda environment
@@ -33,19 +33,18 @@ cd DSCI-532_2026_36_academic-performance
 conda env create -f environment.yml  
 conda activate dsci-532-m1
 
-### 3. Run the dashboard locally
+### 3. Run the Shiny dashboard locally
 
 python src/app.py
 
-Then open your browser and go to:
-
-http://127.0.0.1:8050
+After running, open the URL shown in the terminal (typically http://127.0.0.1:8000).
 
 ---
 
 ## Milestone 1 Status
 
-- Basic dashboard skeleton implemented  
-- Layout placeholders added  
-- Environment configuration completed  
+- Shiny app skeleton implemented
+- Sidebar layout structured
+- Value boxes and cards added as placeholders
+- Environment configuration completed
 - Ready for further development in Milestone 2
