@@ -2,7 +2,7 @@
 
 **Our role:** Ministry of Education student performance analytics team  
 
-**Target audience:** School staff and educators such principals, counsellors, academic coordinators. Parents and students.
+**Target audience:** School staff and educators such as principals, counsellors, and academic coordinators, and parents and students.
 
 Schools constantly need to decide how to spend they limited resources to improve student success. 
 These decisions are often made from simple metrics like averages which can hide important information such as attendance patterns, access to resources, motivation and relationships between those.
@@ -82,7 +82,7 @@ Rather than investing in expensive tutoring or additional academic resources, Ja
 ## Exploratory Data Analysis
 
 >
-> **Analysis:** (See full [EDA Notebook](../notebooks/eda_analysis.ipynb)) To address User Story 1, we created two visualizations that analyze the relationship between hours of sleep and academic performance:
+> **Analysis:** (See full [EDA Notebook](../notebooks/eda_analysis.ipynb)) To address User Story 3, we created two visualizations that analyze the relationship between hours of sleep and academic performance:
 > - Scatter Plot with Trend Lines: We plotted a scatter plot of `Exam Score` against `Hours of Sleep`, faceted by `Resource Access` to determine if more hours of sleep is correlated with higher exam scores.
 > - Grouped Bar Chart: We aggregated average exam scores into three sleep categories (< 6, 6-8, and > 8 hours) to check for broader patterns across different levels of access to resources.
 
