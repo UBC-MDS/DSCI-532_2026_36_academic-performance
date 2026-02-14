@@ -1,53 +1,83 @@
-## Motivation and Purpose
+## Section 1: Motivation and Purpose
 
-> **Our role:**
-> 
-> **Target audience:**
->
-> 
+**Our role:** Ministry of Education student performance analytics team  
 
-## Description of the Data
+**Target audience:** School staff and educators such principals, counsellors, academic coordinators. Parents and students.
 
-> 
+Schools constantly need to decide how to spend they limited resources to improve student success. 
+These decisions are often made from simple metrics like averages which can hide important information such as attendance patterns, access to resources, motivation and relationships between those.
 
-## Research Questions & Usage Scenarios
+We propose building an interactive dashboard that helps educational decision makers explore and compare factors associated with exam performance. 
+This dashboard will enable users to identify patterns and investigate which variables are most associated with lower exam scores. 
+The goal is not to predict individual students, but to provide decision making support: highlight potential areas for intervention, guide policy questions, and support data driven planning.
 
-### Usage Scenario
-> Jane is a concerned parent of a high school student, and she wants to support her son's education and academic performance but is not sure if she should focus more on hiring tutors or enforcing strict bedtimes.
->
-> Jane accesses the dashboard of academic performance and navigates to the "Lifestyle vs. Performance" tab. She uses the filters to select students with high `parental_involvement` to see a relevant baseline. She interacts with a scatter plot comparing sleep_hours against exam_score. She notices a trend where students getting 8+ hours of sleep consistently outperform those getting less than 6, regardless of access_to_resources.
-> 
-> Jane decides to prioritize an earlier curfew for her child rather than purchasing expensive extra resources, data-backing her parenting decision.
-> 
+Our dashboard will also be useful for individual students and their parents looking to improve exam performance by understanding impact of sleep, attendance and other variables. 
 
-### User Stories
+## Section 2: Description of the Data
 
-> **User Story 1:**
-> As a parent, I want to visualize the correlation between hours of sleep and final grades in order to determine if enforcing a stricter bedtime is a more effective strategy than increasing study hours.
->
-> **User Story 2:**
-> 
->
-> **User Story 3:**
-> 
+We will visualize a student academic performance dataset where each row represents one student and columns represent variables described below. 
+The response is a discrete numeric variable variable `Exam_Score`.
 
-### Jobs to Be Done
-*...or as Jobs to Be Done:*
+Key explanatory variables are as follows:
 
-> **JTBD 1:**
-> **Situation:** When I am reviewing monthly attendance reports...
-> **Motivation:** ...I want to separate routine absences from systemic issues...
-> **Outcome:** ...so I can allocate intervention budget to the right patient groups.
->
-> **JTBD 2:**
-> **Situation:** When investigating a spike in no-shows...
-> **Motivation:** ...I want to see if specific physical disabilities correlate with absenteeism...
-> **Outcome:** ...so I can propose targeted transportation support services.
->
-> **JTBD 3:**
-> **Situation:** When planning clinic hours...
-> **Motivation:** ...I want to see if appointments on Mondays or Fridays are missed more often...
-> **Outcome:** ...so I can optimize the scheduling grid.
+- **Academic / effort:** `Hours_Studied`, `Previous_Scores`, `Tutoring_Sessions`
+- **Engagement / routine:** `Attendance`, `Sleep_Hours`, `Physical_Activity`, `Extracurricular_Activities`
+- **Access / context:** `Access_to_Resources`, `Internet_Access`, `Distance_from_Home`
+- **Home / family:** `Parental_Involvement`, `Family_Income`, `Parental_Education_Level`
+- **School environment:** `Teacher_Quality`, `School_Type`, `Peer_Influence`
+- **Demographics / supports:** `Gender`, `Learning_Disabilities`, `Motivation_Level`
+
+The dashboard will support filtering across some of these categories and comparing distributions of exam scores across groups to help stakeholders understand which combinations of factors are associated with lower performance.
+
+
+## Section 3: Research Questions & Usage Scenarios
+
+### Persona
+
+**Jordan**, a vice-principal at a mid-sized high school, is responsible for allocating limited resources each term (tutoring seats, counselor check-ins, study skills workshops). 
+Jordan needs to understand which student contexts are most commonly associated with low exam performance to prioritize programming.
+
+**Jane** is a concerned parent of a high school student. 
+She wants to support her son's education and academic performance but is unsure whether she should focus more on hiring tutors or enforcing stricter sleep routines and lifestyle habits.
+
+### Usage scenarios
+
+**Jordan** opens the dashboard to prepare for next term’s support planning. Jordan first reviews overall performance and then filters to students with low attendance to see how exam scores change across levels of access to resources and parental involvement. 
+Jordan notices that low attendance combined with low access to resources is associated with lower exam scores than low attendance alone. Jordan then compares whether tutoring sessions appear to narrow that gap across groups. 
+Based on these patterns, Jordan prioritizes after-school tutoring and resource support (e.g., device lending or internet access initiatives) for student groups that appear most disadvantaged.
+
+**Jane** accesses the dashboard and navigates to the "Lifestyle vs. Performance" section. She uses filters to select students with high Parental Involvement to establish a relevant baseline for families similar to hers.
+She then interacts with a scatter plot comparing sleep hours against exam score. Jane notices a clear upward trend: students getting 8 or more hours of sleep consistently outperform those getting fewer than 6 hours, regardless of Access to Resources.
+Rather than investing in expensive tutoring or additional academic resources, Jane decides to prioritize enforcing an earlier bedtime. The dashboard provides her with data-backed confidence in her parenting decision.
+
+### User Stories 
+
+1. **As a school principal**, I want to filter students by attendance and access to resources so that I can identify groups that may need targeted academic support.
+
+2. **As a school principal**, I want to compare exam score distributions across tutoring session counts so that I can evaluate whether tutoring is associated with improved outcomes for different student contexts.
+
+3. **As a parent**, I want to visualize the relationship between sleep hours and exam performance so that I can determine whether lifestyle adjustments may meaningfully impact my child’s academic success.
+
+4. **As a parent**, I want to compare lifestyle factors (sleep, physical activity) against structural factors (resources, tutoring) so that I can decide where to invest time and money.
+
+### JTBD
+
+1. **Situation:** When planning academic support budgets,  
+   **Motivation:** I want to identify which student segments are doing poorly and why,  
+   **Outcome:** So I can allocate limited school resources effectively.
+
+2. **Situation:** When evaluating whether tutoring programs are working,  
+   **Motivation:** I want to compare performance outcomes across tutoring levels and student backgrounds,  
+   **Outcome:** So I can justify expanding or restructuring support programs.
+
+3. **Situation:** When deciding how to support my child at home,  
+   **Motivation:** I want to understand whether sleep and lifestyle factors are strongly associated with exam performance,  
+   **Outcome:** So I can prioritize the most impactful changes.
+
+4. **Situation:** When considering additional financial investments in education,  
+   **Motivation:** I want to compare the relative influence of tutoring versus healthy routines,  
+   **Outcome:** So I can make cost-effective, data driven parenting decisions.
+
 
 ## Exploratory Data Analysis
 
