@@ -1,5 +1,6 @@
 # DSCI-532_2026_36_academic-performance
-# Academic Performance Dashboard
+
+## Academic Performance Dashboard
 
 This project develops an interactive dashboard using **Shiny for Python** to explore factors associated with student academic performance.
 
@@ -9,34 +10,39 @@ The goal is to create a human-centered, interactive decision-support tool that e
 
 ## Project Structure
 
+```text
 DSCI-532_2026_36_academic-performance/
-
-- src/                # Shiny application (app.py)
-- data/raw/           # Raw dataset
-- notebooks/          # Exploratory Data Analysis (EDA)
-- reports/            # Proposal document
-- img/                # Dashboard sketch
-- environment.yml     # Project dependencies
-- README.md
-
+├── src/              # Shiny application (app.py)
+├── data/raw/         # Raw dataset
+├── notebooks/        # Exploratory Data Analysis (EDA)
+├── reports/          # Proposal document
+├── img/              # Dashboard sketch
+├── environment.yml   # Project dependencies
+└── README.md
+```
 ---
 
 ## Setup Instructions
 
 ### 1. Clone the repository
-
-git clone https://github.com/UBC-MDS/DSCI-532_2026_36_academic-performance.git  
+Start by cloning the repository to your local machine and navigating into the project directory:
+```bash
+git clone https://github.com/UBC-MDS/DSCI-532_2026_36_academic-performance.git
 cd DSCI-532_2026_36_academic-performance
+```
 
 ### 2. Create the conda environment
-
+Install the required dependencies using the provided `environment.yml` file:
+```bash
 conda env create -f environment.yml  
 conda activate dsci-532-m1
+```
 
 ### 3. Run the Shiny dashboard locally
-
+Launch the Shiny app locally:
+```bash
 python src/app.py
-
+```
 After running, open the URL shown in the terminal (typically http://127.0.0.1:8000).
 
 ---
