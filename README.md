@@ -38,10 +38,11 @@ conda env create -f environment.yml
 conda activate dsci-532-m1
 ```
 
-### 3. Run the Shiny dashboard locally
-Launch the Shiny app locally:
+### 3. Run the Shiny dashboard
+Launch the dashboard locally:
 ```bash
-python src/app.py
+cd src
+shiny run --reload app.py
 ```
 After running, open the URL shown in the terminal (typically http://127.0.0.1:8000).
 
