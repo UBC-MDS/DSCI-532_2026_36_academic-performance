@@ -52,9 +52,11 @@
 ## Exploratory Data Analysis
 
 >
-> **Analysis:** To address User Story 1, we analyzed ...
->
-> **Reflection:** ...
+> **Analysis:** (See full [EDA Notebook](../notebooks/eda_analysis.ipynb)) To address User Story 1, we created two visualizations that analyze the relationship between hours of sleep and academic performance:
+> - Scatter Plot with Trend Lines: We plotted a scatter plot of `Exam Score` against `Hours of Sleep`, faceted by `Resource Access` to determine if more hours of sleep is correlated with higher exam scores.
+> - Grouped Bar Chart: We aggregated average exam scores into three sleep categories (< 6, 6-8, and > 8 hours) to check for broader patterns across different levels of access to resources.
+
+> **Reflection:** Both visualizations show a negligible correlation between sleep duration and exam scores. All three regression lines on the scatter plot have small slopes. The grouped bar chart shows nearly identical average exam scores regardless of whether a student sleeps less than 6 hours or more than 8 hours. This exploration suggests that it might be better for the parents of students to shift their focus away from sleep duration and other explanatory variables, such as `Access_to_Resources`, might have a higher impact on academic performance. These observations are purely descriptive; further statistical testing is necessary to validate these patterns and draw robust inferential conclusions regarding the population.
 
 ## App Sketch & Description
 
