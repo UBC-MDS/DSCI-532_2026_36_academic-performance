@@ -1,1 +1,1 @@
-
+The Academic Performance Dashboard is an interactive tool built with Shiny for Python that empowers users to explore the complex factors influencing student success. By visualizing relationships between variables such as sleep duration, resource access, and exam scores, the application helps parents and educators distinguish between high-impact drivers and negligible trends. This data-driven approach supports more informed decision-making by highlighting where interventions are most likely to improve academic outcomes.
