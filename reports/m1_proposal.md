@@ -15,8 +15,7 @@ Our dashboard will also be useful for individual students and their parents look
 
 ## Section 2: Description of the Data
 
-We will visualize a student academic performance dataset where each row represents one student and columns represent variables described below. 
-The response is a discrete numeric variable variable `Exam_Score`.
+The dataset consists of 6607 rows and 20 columns. We will visualize a student academic performance dataset where each row represents one student and columns represent variables described below. The response is a discrete numeric variable variable `Exam_Score`.
 
 Key explanatory variables are as follows:
 
