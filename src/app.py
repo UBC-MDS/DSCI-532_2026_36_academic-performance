@@ -1,46 +1,154 @@
-from shiny import App, ui
+import pandas as pd
+import altair as alt
+import numpy as np
+from shiny import App, ui, render, reactive
+from shinywidgets import output_widget, render_widget
+
+
+alt.data_transformers.disable_max_rows()
+
+# load in data
+try:
+    df_raw = pd.read_csv("../data/StudentPerformanceFactors.csv")
+except FileNotFoundError:
+    df_raw = pd.read_csv("StudentPerformanceFactors.csv")
+
+# only keep rows where our primary filters have values
+df = df_raw.dropna(subset=["School_Type", "Parental_Education_Level"]).copy()
+
+income_order = ["Low", "Medium", "High"]
+involvement_order = ["Low", "Medium", "High"]
 
 app_ui = ui.page_fillable(
     ui.panel_title("Academic Performance Dashboard"),
     ui.layout_sidebar(
         ui.sidebar(
-            ui.h4("Sidebar inputs"),
-            ui.p("Placeholder for filters (e.g., grade range, subject, gender, lunch, test prep)."),
+            ui.h4("Global Filters"),
+            ui.input_checkbox_group(
+                "school_type",
+                "School Type",
+                choices=["Public", "Private"],
+                selected=["Public", "Private"],
+            ),
+            ui.input_select(
+                "parent_edu",
+                "Parental Education Level",
+                choices=sorted(df["Parental_Education_Level"].unique().tolist()),
+                selected=df["Parental_Education_Level"].unique().tolist(),
+                multiple=True,
+            ),
+            ui.hr(),
+            ui.markdown("**Authors:** Group Project | **DSCI 532**"),
             open="desktop",
         ),
+        # TOP CARDS
         ui.layout_columns(
-            ui.value_box("Total students", "Placeholder"),
-            ui.value_box("Average score", "Placeholder"),
-            ui.value_box("Performance gap", "Placeholder"),
+            ui.value_box("AVG Exam Score", ui.output_text("avg_score"), theme="primary"),
+            ui.value_box("AVG Hours Studied", ui.output_text("avg_hours")),
+            ui.value_box("AVG Attendance", ui.output_text("avg_attendance")),
             fill=False,
+        ),
+        # CHARTS
+        ui.layout_columns(
+            ui.card(
+                ui.card_header("Study Habits vs. Performance"),
+                output_widget("scatter_plot"),
+                full_screen=True,
+            ),
+            col_widths=[12],
         ),
         ui.layout_columns(
             ui.card(
-                ui.card_header("Data preview"),
-                ui.p("Placeholder for a data table (e.g., aggregated summary by group)."),
+                ui.card_header("Score Distribution by Family Income"),
+                output_widget("income_boxplot"),
                 full_screen=True,
             ),
             ui.card(
-                ui.card_header("Main visualization"),
-                ui.p("Placeholder for a chart (e.g., score distribution / group comparison)."),
+                ui.card_header("Impact of Parental Involvement"),
+                output_widget("involvement_bar"),
                 full_screen=True,
             ),
             col_widths=[6, 6],
-        ),
-        ui.layout_columns(
-            ui.card(
-                ui.card_header("Secondary visualization"),
-                ui.p("Placeholder for an additional chart (e.g., trend / distribution / subgroup analysis)."),
-                full_screen=True,
-            )
         ),
     ),
 )
 
 
 def server(input, output, session):
-    # Milestone 1: skeleton only (no server logic yet)
-    pass
+    
+    @reactive.calc
+    def filtered_data():
+        if not input.school_type() or not input.parent_edu():
+            return df.iloc[0:0] 
+            
+        return df[
+            (df["School_Type"].isin(input.school_type())) &
+            (df["Parental_Education_Level"].isin(input.parent_edu()))
+        ].copy()
+
+    # KPI output
+    @render.text
+    def avg_score():
+        data = filtered_data()
+        if data.empty: return "N/A"
+        return f"{data['Exam_Score'].mean():.1f}%"
+
+    @render.text
+    def avg_hours():
+        data = filtered_data()
+        if data.empty: return "N/A"
+        return f"{data['Hours_Studied'].mean():.1f} hrs"
+
+    @render.text
+    def avg_attendance():
+        data = filtered_data()
+        if data.empty: return "N/A"
+        return f"{data['Attendance'].mean():.1f}%"
+
+
+    @render_widget
+    def scatter_plot():
+        data = filtered_data()
+        if data.empty: return alt.Chart(pd.DataFrame()).mark_text()
+
+        plot_df = data[["Hours_Studied", "Exam_Score"]].dropna()
+        plot_df = plot_df.replace([np.inf, -np.inf], np.nan).dropna()
+
+        base = alt.Chart(plot_df).encode(
+            x=alt.X("Hours_Studied:Q", title="Hours Studied"),
+            y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[40, 100]))
+        )
+        
+        scatter = base.mark_circle(opacity=0.4, color="#21918c")
+        line = base.transform_loess("Hours_Studied", "Exam_Score").mark_line(color="red", size=3)
+        
+        return (scatter + line).properties(height=300, width='container')
+
+    @render_widget
+    def income_boxplot():
+        data = filtered_data()
+        if data.empty: return alt.Chart(pd.DataFrame()).mark_text()
+
+        plot_df = data[["Family_Income", "Exam_Score"]].dropna()
+        
+        return alt.Chart(plot_df).mark_boxplot(extent='min-max').encode(
+            x=alt.X("Family_Income:N", sort=income_order, title="Family Income"),
+            y=alt.Y("Exam_Score:Q", title="Exam Score"),
+            color=alt.Color("Family_Income:N", scale=alt.Scale(scheme='viridis'), legend=None)
+        ).properties(height=300, width='container')
+
+    @render_widget
+    def involvement_bar():
+        data = filtered_data()
+        if data.empty: return alt.Chart(pd.DataFrame()).mark_text()
+
+        plot_df = data[["Parental_Involvement", "Exam_Score"]].dropna()
+        
+        return alt.Chart(plot_df).mark_bar().encode(
+            x=alt.X("Parental_Involvement:N", sort=involvement_order, title="Involvement Level"),
+            y=alt.Y("mean(Exam_Score):Q", title="Average Exam Score"),
+            color=alt.Color("Parental_Involvement:N", scale=alt.Scale(scheme='viridis'), legend=None)
+        ).properties(height=300, width='container')
 
 
 app = App(app_ui, server)
