@@ -9,6 +9,10 @@ dependencies:
   - pip
   - pandas
   - altair
+  - anywidget
+  - vegafusion 
+  - vegafusion-python-embed
   - jupyterlab
   - ipykernel
   - shiny
+  - shinywidgets
