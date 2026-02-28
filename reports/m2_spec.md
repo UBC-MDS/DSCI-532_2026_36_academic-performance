@@ -1,54 +1,60 @@
-### 2.1 Updated Job Stories
+# Milestone 2 Specification
+
+## 2.1 Updated Job Stories
 
 | # | Job Story | Status | Notes |
 |---|-----------|--------|-------|
-| 1 | When I open the dashboard, I want to visualize the differences in exam score distributions between private and public schools, so I can allocate the limited funds effectively. | ✅ Implemented |  |
-| 2 | When I am evaluating whether my tutoring programs are working, I want to compare performance outcomes across tutoring levels and student backgrounds, so I can justify expanding or restructuring support programs. | ⏳ Pending M3 |  |
-| 3 | When I support my child at home, I want to understand whether factors like the number of hours studied, parental involvement, sleep, lifestyle, etc. are associated with exam performance, so I can prioritize the most impactful changes and become involved in my child's education in the best way possible. | ⏳ Pending M3 |  |
-| 4 | When I invest in my child's education, I want to compare the relative influence of tutoring versus healthy routines, so I can make cost-effective and data driven parenting decisions. | ⏳ Pending M3 | |
+| 1 | When I filter students by school context (e.g., school type, parental education level), I want the dashboard to update automatically so I can explore performance patterns across groups. | ✅ Implemented | Implemented via global filters + shared reactive filtered_data |
+| 2 | When reviewing overall performance, I want quick KPI-style summaries so I can get an immediate sense of the selected group. | ✅ Implemented | AVG Exam Score / AVG Hours Studied / AVG Attendance value boxes |
+| 3 | When exploring study effort, I want to see how hours studied relates to exam score so I can understand trends and potential intervention targets. | ✅ Implemented | Scatter plot with LOESS trend line |
+| 4 | When comparing family context factors, I want to compare score distributions/averages across categories so I can identify gaps. | ✅ Implemented | Income boxplot + parental involvement bar chart |
 
-### 2.2 Component Inventory
+---
 
-| ID            | Type          | Shiny widget / renderer | Depends on                   | Job story  |
-| ------------- | ------------- | ----------------------- | ---------------------------- | ---------- |
-| `input_school_type`           | Input         | `ui.input_checkbox_group()` | —  | #1, #3       |
-| `input_parent_edu`            | Input         | `ui.input_select()`         | —  | #2       |
-| `filtered_df`                 | Reactive calc | `@reactive.calc`            |`input_school_type`,`input_parent_edu`| #..       |
-| `vb_exam_score`               | Output        | `@render.text`              | `filtered_df`| #..       |
-| `vb_hours_studied`            | Output        | `@render.text`              | `filtered_df`| #..       |
-| `vb_attendance`               | Output        | `@render.text`              | `filtered_df`| #..       |
-| `plot_study_habits`           | Output        | `@render.plot`              | `filtered_df`| #..       |
-| `plot_score_income`           | Output        | `@render.plot`              | `filtered_df`| #..       |
-| `plot_parental_involvement`   | Output        | `@render.plot`              | `filtered_df`| #..       |
+## 2.2 Component Inventory
 
-**Total Components:** 9
+| ID | Type | Shiny widget / renderer | Depends on | Job story |
+|----|------|--------------------------|------------|-----------|
+| school_type | Input | `ui.input_checkbox_group()` | — | #1 |
+| parent_edu | Input | `ui.input_select(..., multiple=True)` | — | #1 |
+| filtered_data | Reactive calc | `@reactive.calc` | school_type, parent_edu | #1 |
+| avg_score | Output | `@render.text` | filtered_data | #2 |
+| avg_hours | Output | `@render.text` | filtered_data | #2 |
+| avg_attendance | Output | `@render.text` | filtered_data | #2 |
+| scatter_plot | Output | `@render_widget` (Altair) | filtered_data | #3 |
+| income_boxplot | Output | `@render_widget` (Altair) | filtered_data | #4 |
+| involvement_bar | Output | `@render_widget` (Altair) | filtered_data | #4 |
 
-### 2.3 Reactivity Diagram
+---
+
+## 2.3 Reactivity Diagram
 
 ```mermaid
 flowchart TD
-    A[/input_school_type/] --> F{{filtered_df}}
-    B[/input_parent_edu/] --> F
-    F --> V1([vb_exam_score])
-    F --> V2([vb_hours_studied])
-    F --> V3([vb_attendance])
-    F --> P1([plot_study_habits])
-    F --> P2([plot_score_income])
-    F --> P3([plot_parental_involvement])
+  A[/school_type/] --> F{{filtered_data}}
+  B[/parent_edu/] --> F
+  F --> K1([avg_score])
+  F --> K2([avg_hours])
+  F --> K3([avg_attendance])
+  F --> P1([scatter_plot])
+  F --> P2([income_boxplot])
+  F --> P3([involvement_bar])
 ```
 
-Verify your diagram satisfies the reactivity requirements in Phase 3.2 before you start coding.
+---
 
-### 2.4 Calculation Details
-**`filtered_df`** (`@reactive.calc`)
+## 2.4 Calculation Details
 
-- **Depends on:** `input_school_type`, `input_parent_edu`
-- **Transformation:** Starts from the cleaned dataset df
+### `filtered_data` (`@reactive.calc`)
 
-    Filters rows to keep observations where:
-    - School_Type is in the selected school types
-    - Parental_Education_Level is in the selected parent education levels
+- **Inputs:** `school_type`, `parent_edu`
 
-    Returns a copy of the filtered data frame.
+- **Transformation:**  
+  Filters rows of the dataset to only include students where  
+  `School_Type` is within the selected school types **and**  
+  `Parental_Education_Level` is within the selected parental education levels.  
+  If either input is empty, the function returns an empty dataframe to prevent rendering errors.
 
-- **Consumed by:** `vb_exam_score`, `vb_hours_studied`, `vb_attendance`, `plot_study_habits`, `plot_score_income`, and `plot_parental_involvement` 
+- **Consumed by outputs:**  
+  `avg_score`, `avg_hours`, `avg_attendance`,  
+  `scatter_plot`, `income_boxplot`, `involvement_bar`
