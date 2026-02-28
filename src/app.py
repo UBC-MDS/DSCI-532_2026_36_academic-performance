@@ -3,15 +3,16 @@ import altair as alt
 import numpy as np
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
+from pathlib import Path
 
 
 alt.data_transformers.disable_max_rows()
 
-# load in data
-try:
-    df_raw = pd.read_csv("../data/StudentPerformanceFactors.csv")
-except FileNotFoundError:
-    df_raw = pd.read_csv("StudentPerformanceFactors.csv")
+# load in data 
+APP_DIR = Path(__file__).resolve().parent
+DATA_PATH = APP_DIR.parent / "data" / "StudentPerformanceFactors.csv"
+
+df_raw = pd.read_csv(DATA_PATH)
 
 # only keep rows where our primary filters have values
 df = df_raw.dropna(subset=["School_Type", "Parental_Education_Level"]).copy()
