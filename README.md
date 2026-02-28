@@ -45,7 +45,7 @@ conda env create -f environment.yml
 conda activate dsci-532-m1
 
 cd src
-shiny run --reload app.py
+shiny run app.py
 ```
 
 ## Project Structure
