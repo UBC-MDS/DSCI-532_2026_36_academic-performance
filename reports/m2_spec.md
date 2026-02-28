@@ -4,8 +4,8 @@
 |---|-----------|--------|-------|
 | 1 | When I plan academic support budgets, I want to identify which student segments are doing poorly and why, so I can allocate limited school resources effectively. | ... | ... |
 | 2 | When I am evaluating whether my tutoring programs are working, I want to compare performance outcomes across tutoring levels and student backgrounds, so I can justify expanding or restructuring support programs. | ... | ... |
-| 3 | When I support my child at home, I want to understand whether sleep and lifestyle factors are associated with exam performance, so I can prioritize the most impactful changes. | ... | ... |
-| 4 | When I invest in my child's education, I want to compare the relative influence of tutoring versus healthy routines, so I can make cost-effective and data driven parenting decisions. | ... | ... |
+| 3 | When I support my child at home, I want to understand whether sleep and lifestyle factors are associated with exam performance, so I can prioritize the most impactful changes. | ⏳ Pending M3 | ... |
+| 4 | When I invest in my child's education, I want to compare the relative influence of tutoring versus healthy routines, so I can make cost-effective and data driven parenting decisions. | ⏳ Pending M3 | ... |
 
 ### 2.2 Component Inventory
 
