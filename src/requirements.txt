@@ -1,0 +1,8 @@
+altair==6.0.0
+anywidget==0.9.21
+numpy==2.4.2
+pandas==3.0.1
+shiny==1.5.1
+shinywidgets==0.7.1
+vegafusion==2.0.2
+vegafusion-python-embed==1.6.9
