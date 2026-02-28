@@ -45,12 +45,12 @@ Verify your diagram satisfies the reactivity requirements in Phase 3.2 before yo
 - **Depends on:** `input_school_type`, `input_parent_edu`
 - **Transformation:** Starts from the cleaned dataset df
 
-If filters have no selections, returns an empty DataFrame.
+    If filters have no selections, returns an empty DataFrame.
 
-Otherwise filters rows to keep observations where:
-- School_Type is in the selected school types
-- Parental_Education_Level is in the selected parent education levels
+    Otherwise filters rows to keep observations where:
+    - School_Type is in the selected school types
+    - Parental_Education_Level is in the selected parent education levels
 
-Returns a copy of the filtered data frame.
+    Returns a copy of the filtered data frame.
 
 - **Consumed by:** `vb_exam_score`, `vb_hours_studied`, `vb_attendance`, `plot_study_habits`, `plot_score_income`, and `plot_parental_involvement` 
