@@ -21,7 +21,7 @@
 | `plot_score_income`           | Output        | `@render.plot`              | `filtered_df`| #1       |
 | `plot_parental_involvement`   | Output        | `@render.plot`              | `filtered_df`| #1       |
 
-**Total Components:** 9
+**Total Components:** 9 
 
 ### 2.3 Reactivity Diagram
 
@@ -37,7 +37,7 @@ flowchart TD
     F --> P3([plot_parental_involvement])
 ```
 
-Verify your diagram satisfies the reactivity requirements in Phase 3.2 before you start coding.
+Yes, the diagram satisfies the reactivity requirements in Phase 3.2. `filtered_df` depends on two inputs (`input_school_type` and `input_parent_edu`). All of the outputs consume the same `@reactive.calc`, and each input change triggers the calculation once.
 
 ### 2.4 Calculation Details
 **`filtered_df`** (`@reactive.calc`)
