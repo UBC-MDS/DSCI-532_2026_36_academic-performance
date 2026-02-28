@@ -8,6 +8,14 @@ The goal is to create a human-centered, interactive decision-support tool that e
 
 ---
 
+## Stable and Preview URLs
+
+Stable
+https://mkmetiuk-dsci-532-2026-36-academic-performance.share.connect.posit.cloud
+
+Preview
+https://mkmetiuk-dev.share.connect.posit.cloud
+
 ## Project Structure
 
 ```text
@@ -42,7 +50,7 @@ conda activate dsci-532-m1
 Launch the dashboard locally:
 ```bash
 cd src
-shiny run --reload app.py
+shiny run app.py
 ```
 After running, open the URL shown in the terminal (typically http://127.0.0.1:8000).
 
