@@ -2,17 +2,17 @@
 
 | # | Job Story | Status | Notes |
 |---|-----------|--------|-------|
-| 1 | When I plan academic support budgets, I want to identify which student segments are doing poorly and why, so I can allocate limited school resources effectively. | ... | ... |
-| 2 | When I am evaluating whether my tutoring programs are working, I want to compare performance outcomes across tutoring levels and student backgrounds, so I can justify expanding or restructuring support programs. | ... | ... |
-| 3 | When I support my child at home, I want to understand whether sleep and lifestyle factors are associated with exam performance, so I can prioritize the most impactful changes. | ⏳ Pending M3 | ... |
-| 4 | When I invest in my child's education, I want to compare the relative influence of tutoring versus healthy routines, so I can make cost-effective and data driven parenting decisions. | ⏳ Pending M3 | ... |
+| 1 | When I open the dashboard, I want to visualize the differences in exam score distributions between private and public schools, so I can allocate the limited funds effectively. | ✅ Implemented |  |
+| 2 | When I am evaluating whether my tutoring programs are working, I want to compare performance outcomes across tutoring levels and student backgrounds, so I can justify expanding or restructuring support programs. | ⏳ Pending M3 |  |
+| 3 | When I support my child at home, I want to understand whether factors like the number of hours studied, parental involvement, sleep, lifestyle, etc. are associated with exam performance, so I can prioritize the most impactful changes and become involved in my child's education in the best way possible. | ⏳ Pending M3 |  |
+| 4 | When I invest in my child's education, I want to compare the relative influence of tutoring versus healthy routines, so I can make cost-effective and data driven parenting decisions. | ⏳ Pending M3 | |
 
 ### 2.2 Component Inventory
 
 | ID            | Type          | Shiny widget / renderer | Depends on                   | Job story  |
 | ------------- | ------------- | ----------------------- | ---------------------------- | ---------- |
-| `input_school_type`           | Input         | `ui.input_checkbox_group()` | —  | #..       |
-| `input_parent_edu`            | Input         | `ui.input_select()`         | —  | #..       |
+| `input_school_type`           | Input         | `ui.input_checkbox_group()` | —  | #1, #3       |
+| `input_parent_edu`            | Input         | `ui.input_select()`         | —  | #2       |
 | `filtered_df`                 | Reactive calc | `@reactive.calc`            |`input_school_type`,`input_parent_edu`| #..       |
 | `vb_exam_score`               | Output        | `@render.text`              | `filtered_df`| #..       |
 | `vb_hours_studied`            | Output        | `@render.text`              | `filtered_df`| #..       |
@@ -25,30 +25,23 @@
 
 ### 2.3 Reactivity Diagram
 
-Draw your planned reactive graph as a [Mermaid](https://mermaid.js.org/) flowchart using the notation from Lecture 3:
-
-- `[/Input/]` (Parallelogram) (or `[Input]` Rectangle) = reactive input
-- Hexagon `{{Name}}` = `@reactive.calc` expression
-- Stadium `([Name])` (or Circle) = rendered output
-
-Example:
-
-````markdown
 ```mermaid
 flowchart TD
-  A[/input_year/] --> F{{filtered_df}}
-  B[/input_region/] --> F
-  F --> P1([plot_trend])
-  F --> P2([tbl_summary])
-  C[/input_color/] --> P3([plot_scatter])
+    A[/input_school_type/] --> F{{filtered_df}}
+    B[/input_parent_edu/] --> F
+    F --> V1([vb_exam_score])
+    F --> V2([vb_hours_studied])
+    F --> V3([vb_attendance])
+    F --> P1([plot_study_habits])
+    F --> P2([plot_score_income])
+    F --> P3([plot_parental_involvement])
 ```
-````
 
 Verify your diagram satisfies the reactivity requirements in Phase 3.2 before you start coding.
 
 ### 2.4 Calculation Details
-For each `@reactive.calc` in your diagram, briefly describe:
+**`filtered_df`** (`@reactive.calc`)
 
-- Which inputs it depends on.
-- What transformation it performs (e.g., "filters rows to the selected year range and region(s)").
-- Which outputs consume it.
+- **Depends on:** `input_school_type`, `input_parent_edu`
+- **Transformation:** ...
+- **Consumed by:** `vb_exam_score`, `vb_hours_studied`, `vb_attendance`, `plot_study_habits`, `plot_score_income`, and `plot_parental_involvement` 
