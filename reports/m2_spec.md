@@ -11,12 +11,17 @@
 
 | ID            | Type          | Shiny widget / renderer | Depends on                   | Job story  |
 | ------------- | ------------- | ----------------------- | ---------------------------- | ---------- |
-| `input_year`  | Input         | `ui.input_slider()`     | —                            | #.., #..     |
-| `filtered_df` | Reactive calc | `@reactive.calc`        | `input_year`, `input_region` | #.., #.., #.. |
-| `plot_trend`  | Output        | `@render.plot`          | `filtered_df`                | #..         |
-| `tbl_summary` | Output        | `@render.data_frame`    | `filtered_df`                | #..         |
+| `input_school_type`           | Input         | `ui.input_checkbox_group()` | —  | #..       |
+| `input_parent_edu`            | Input         | `ui.input_select()`         | —  | #..       |
+| `filtered_df`                 | Reactive calc | `@reactive.calc`            |`input_school_type`,`input_parent_edu`| #..       |
+| `vb_exam_score`               | Output        | `@render.text`              | `filtered_df`| #..       |
+| `vb_hours_studied`            | Output        | `@render.text`              | `filtered_df`| #..       |
+| `vb_attendance`               | Output        | `@render.text`              | `filtered_df`| #..       |
+| `plot_study_habits`           | Output        | `@render.plot`              | `filtered_df`| #..       |
+| `plot_score_income`           | Output        | `@render.plot`              | `filtered_df`| #..       |
+| `plot_parental_involvement`   | Output        | `@render.plot`              | `filtered_df`| #..       |
 
-**Total Components:** ...
+**Total Components:** 9
 
 ### 2.3 Reactivity Diagram
 
