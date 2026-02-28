@@ -11,15 +11,15 @@
 
 | ID            | Type          | Shiny widget / renderer | Depends on                   | Job story  |
 | ------------- | ------------- | ----------------------- | ---------------------------- | ---------- |
-| `input_school_type`           | Input         | `ui.input_checkbox_group()` | —  | #1, #3       |
+| `input_school_type`           | Input         | `ui.input_checkbox_group()` | —  | #1, #3, #4       |
 | `input_parent_edu`            | Input         | `ui.input_select()`         | —  | #2       |
-| `filtered_df`                 | Reactive calc | `@reactive.calc`            |`input_school_type`,`input_parent_edu`| #..       |
-| `vb_exam_score`               | Output        | `@render.text`              | `filtered_df`| #..       |
-| `vb_hours_studied`            | Output        | `@render.text`              | `filtered_df`| #..       |
-| `vb_attendance`               | Output        | `@render.text`              | `filtered_df`| #..       |
-| `plot_study_habits`           | Output        | `@render.plot`              | `filtered_df`| #..       |
-| `plot_score_income`           | Output        | `@render.plot`              | `filtered_df`| #..       |
-| `plot_parental_involvement`   | Output        | `@render.plot`              | `filtered_df`| #..       |
+| `filtered_df`                 | Reactive calc | `@reactive.calc`            |`input_school_type`,`input_parent_edu`| #1, #2, #3, #4 |
+| `vb_exam_score`               | Output        | `@render.text`              | `filtered_df`| #1      |
+| `vb_hours_studied`            | Output        | `@render.text`              | `filtered_df`| #1       |
+| `vb_attendance`               | Output        | `@render.text`              | `filtered_df`| #1       |
+| `plot_study_habits`           | Output        | `@render.plot`              | `filtered_df`| #1       |
+| `plot_score_income`           | Output        | `@render.plot`              | `filtered_df`| #1       |
+| `plot_parental_involvement`   | Output        | `@render.plot`              | `filtered_df`| #1       |
 
 **Total Components:** 9
 
