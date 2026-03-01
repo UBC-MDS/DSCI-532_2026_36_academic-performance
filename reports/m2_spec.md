@@ -43,6 +43,13 @@ flowchart TD
 
 Yes, the diagram satisfies the reactivity requirements in Phase 3.2. `filtered_df` depends on two inputs (`input_school_type` and `input_parent_edu`). All of the outputs consume the same `@reactive.calc`, and each input change triggers the calculation once.
 
+---
+
+## 2.4 Calculation Details
+
+### `filtered_data` (`@reactive.calc`)
+
+- **Inputs:** `school_type`, `parent_edu`
 - **Transformation:**  
   Filters rows of the dataset to only include students where  
   `School_Type` is within the selected school types **and**  
