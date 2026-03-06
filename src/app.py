@@ -20,7 +20,7 @@ df = df_raw.dropna(subset=["School_Type", "Parental_Education_Level"]).copy()
 income_order = ["Low", "Medium", "High"]
 involvement_order = ["Low", "Medium", "High"]
 
-app_ui = ui.page_fillable(
+app_ui = ui.page_fluid(
     ui.panel_title("Academic Performance Dashboard"),
     ui.layout_sidebar(
         ui.sidebar(
@@ -42,6 +42,7 @@ app_ui = ui.page_fillable(
             ui.markdown("**Authors:** Group Project | **DSCI 532**"),
             open="desktop",
         ),
+
         # TOP CARDS
         ui.layout_columns(
             ui.value_box("AVG Exam Score", ui.output_text("avg_score"), theme="primary"),
@@ -49,25 +50,38 @@ app_ui = ui.page_fillable(
             ui.value_box("AVG Attendance", ui.output_text("avg_attendance")),
             fill=False,
         ),
+
         # CHARTS
         ui.layout_columns(
             ui.card(
                 ui.card_header("Study Habits vs. Performance"),
                 output_widget("scatter_plot"),
                 full_screen=True,
+                style="height: 280px; overflow: hidden;",
             ),
-            col_widths=[12],
+            ui.card(
+                ui.card_header("Attendance vs. Exam Score"),
+                output_widget("attendance_scatter"),
+                full_screen=True,
+                style="height: 280px; overflow: hidden;",
+            ),
+            col_widths=[6, 6],
         ),
+
+        ui.tags.div(style="height: 16px;"),
+
         ui.layout_columns(
             ui.card(
                 ui.card_header("Score Distribution by Family Income"),
                 output_widget("income_boxplot"),
                 full_screen=True,
+                style="height: 280px; overflow: hidden;",
             ),
             ui.card(
                 ui.card_header("Impact of Parental Involvement"),
                 output_widget("involvement_bar"),
                 full_screen=True,
+                style="height: 280px; overflow: hidden;",
             ),
             col_widths=[6, 6],
         ),
@@ -110,46 +124,112 @@ def server(input, output, session):
     @render_widget
     def scatter_plot():
         data = filtered_data()
-        if data.empty: return alt.Chart(pd.DataFrame()).mark_text()
+        if data.empty:
+            return alt.Chart(pd.DataFrame()).mark_text()
 
         plot_df = data[["Hours_Studied", "Exam_Score"]].dropna()
         plot_df = plot_df.replace([np.inf, -np.inf], np.nan).dropna()
 
         base = alt.Chart(plot_df).encode(
             x=alt.X("Hours_Studied:Q", title="Hours Studied"),
-            y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[40, 100]))
+            y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[40, 100])),
         )
-        
+
         scatter = base.mark_circle(opacity=0.4, color="#21918c")
         line = base.transform_loess("Hours_Studied", "Exam_Score").mark_line(color="red", size=3)
-        
-        return (scatter + line).properties(height=300, width='container')
+
+        return (scatter + line).properties(height=220, width="container")
 
     @render_widget
     def income_boxplot():
         data = filtered_data()
-        if data.empty: return alt.Chart(pd.DataFrame()).mark_text()
+        if data.empty:
+            return alt.Chart(pd.DataFrame()).mark_text()
 
         plot_df = data[["Family_Income", "Exam_Score"]].dropna()
-        
-        return alt.Chart(plot_df).mark_boxplot(extent='min-max').encode(
-            x=alt.X("Family_Income:N", sort=income_order, title="Family Income"),
-            y=alt.Y("Exam_Score:Q", title="Exam Score"),
-            color=alt.Color("Family_Income:N", scale=alt.Scale(scheme='viridis'), legend=None)
-        ).properties(height=300, width='container')
+
+        return (
+            alt.Chart(plot_df)
+            .mark_boxplot(extent="min-max", size=60, clip=True)
+            .encode(
+                x=alt.X(
+                    "Family_Income:N",
+                    sort=income_order,
+                    title="Family Income",
+                    axis=alt.Axis(labelAngle=0),
+                ),
+                y=alt.Y(
+                "Exam_Score:Q",
+                title="Exam Score",
+                scale=alt.Scale(domain=[55, 80])
+            ),
+                color=alt.Color(
+                    "Family_Income:N",
+                    scale=alt.Scale(scheme="viridis"),
+                    legend=None,
+                ),
+            )
+            .properties(height=220, width="container")
+        )
 
     @render_widget
     def involvement_bar():
         data = filtered_data()
-        if data.empty: return alt.Chart(pd.DataFrame()).mark_text()
+        if data.empty:
+            return alt.Chart(pd.DataFrame()).mark_text()
 
         plot_df = data[["Parental_Involvement", "Exam_Score"]].dropna()
-        
-        return alt.Chart(plot_df).mark_bar().encode(
-            x=alt.X("Parental_Involvement:N", sort=involvement_order, title="Involvement Level"),
-            y=alt.Y("mean(Exam_Score):Q", title="Average Exam Score"),
-            color=alt.Color("Parental_Involvement:N", scale=alt.Scale(scheme='viridis'), legend=None)
-        ).properties(height=300, width='container')
 
+        return (
+            alt.Chart(plot_df)
+            .mark_bar(size=80)
+            .encode(
+                x=alt.X(
+                    "Parental_Involvement:N",
+                    sort=involvement_order,
+                    title="Involvement Level",
+                    axis=alt.Axis(labelAngle=0),
+                ),
+                y=alt.Y(
+                "mean(Exam_Score):Q",
+                title="Average Exam Score",
+                scale=alt.Scale(domain=[60, 72])
+            ),
+                color=alt.Color(
+                    "Parental_Involvement:N",
+                    scale=alt.Scale(scheme="viridis"),
+                    legend=None,
+                ),
+            )
+            .properties(height=220, width="container")
+        )
+
+    @render_widget
+    def attendance_scatter():
+        data = filtered_data()
+        if data.empty:
+            return alt.Chart(pd.DataFrame()).mark_text()
+
+        plot_df = data[["Attendance", "Exam_Score"]].dropna()
+        plot_df = plot_df.replace([np.inf, -np.inf], np.nan).dropna()
+
+        base = alt.Chart(plot_df).encode(
+            x=alt.X(
+            "Attendance:Q",
+            title="Attendance (%)",
+            scale=alt.Scale(domain=[60, 100])
+        ),
+        y=alt.Y(
+            "Exam_Score:Q",
+            title="Exam Score",
+            scale=alt.Scale(domain=[40, 100])
+        ),
+    )
+
+        scatter = base.mark_circle(opacity=0.4, color="#21918c")
+        line = base.transform_loess("Attendance", "Exam_Score").mark_line(color="red", size=3)
+
+        return (scatter + line).properties(height=220, width="container")
+    
 
 app = App(app_ui, server)
