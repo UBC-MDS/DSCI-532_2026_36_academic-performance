@@ -6,3 +6,5 @@ shiny==1.5.1
 shinywidgets==0.7.1
 vegafusion==2.0.2
 vegafusion-python-embed==1.6.9
+chatlas
+querychat
