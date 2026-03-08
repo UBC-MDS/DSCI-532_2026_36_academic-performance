@@ -4,6 +4,8 @@ import numpy as np
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 from pathlib import Path
+from querychat import QueryChat
+import chatlas as clt
 
 alt.data_transformers.disable_max_rows()
 
@@ -82,8 +84,31 @@ app_ui = ui.page_fluid(
     ),
 )
 
+with ui.nav_panel(
+        "AI Assistant",
+        ui.layout_sidebar(
+            ui.sidebar(
+                qc.ui() 
+            ),
+            ui.h2("AI Filtered Data Outputs Will Go Here") 
+        )
+    )
+chat = clt.ChatGithub(model="gpt-4o")
+qc = QueryChat(df, 
+               "performance_data", 
+               client=chat,
+               greeting=(
+                   "Hello! I can help you explore the Academic Performance dataset. "
+                   "Try asking things like:\n"
+                   "- *Show only public school students with an average exam score above 80%*\n"
+                   "- *Filter to students whose parents have a postgraduate education*\n"
+                   "- *Which school type has the highest average hours studied?*"
+               )
+              )
+
 
 def server(input, output, session):
+    qc.server()
     
     @reactive.calc
     def filtered_data():
