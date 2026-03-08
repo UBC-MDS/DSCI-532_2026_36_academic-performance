@@ -16,3 +16,6 @@ dependencies:
   - ipykernel
   - shiny
   - shinywidgets
+  - pip:
+      - chatlas
+      - querychat
