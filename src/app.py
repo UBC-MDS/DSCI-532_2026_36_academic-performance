@@ -99,8 +99,13 @@ app_ui = ui.page_fluid(
             ui.layout_sidebar(
                 ui.sidebar(
                     qc.ui(),
+                    width = 400
                 ),
-                ui.h2("AI Filtered Data Outputs Will Go Here"),
+                ui.card(
+                    ui.card_header("Filtered Data"),
+                    ui.output_data_frame("ai_data_table"),
+                    full_screen = True
+                ),
             ),
         ),
     ),
@@ -250,5 +255,8 @@ def server(input, output, session):
         )
         return apply_theme(scatter + line)
 
+    @render.data_frame
+    def ai_data_table():
+        return qc.df()
 
 app = App(app_ui, server)
