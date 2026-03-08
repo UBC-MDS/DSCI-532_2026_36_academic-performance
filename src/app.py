@@ -113,7 +113,7 @@ app_ui = ui.page_fluid(
 
 
 def server(input, output, session):
-    qc.server()
+    outputs = qc.server()
 
     @reactive.calc
     def filtered_data():
@@ -257,6 +257,6 @@ def server(input, output, session):
 
     @render.data_frame
     def ai_data_table():
-        return qc.df()
+        return outputs.df()
 
 app = App(app_ui, server)
