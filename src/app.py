@@ -104,6 +104,8 @@ app_ui = ui.page_fluid(
                 ui.card(
                     ui.card_header("Filtered Data"),
                     ui.output_data_frame("ai_data_table"),
+                    ui.download_button("download_ai_output",
+                                      "Download dataframe as CSV"),
                     full_screen = True
                 ),
             ),
@@ -258,5 +260,9 @@ def server(input, output, session):
     @render.data_frame
     def ai_data_table():
         return outputs.df()
+
+    @render.download
+    def download_ai_output():
+        yield outputs.df().to_csv(index = False)
 
 app = App(app_ui, server)
