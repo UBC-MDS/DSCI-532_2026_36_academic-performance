@@ -76,6 +76,16 @@ app_ui = ui.page_fillable(
     ),
 )
 
+with ui.nav_panel(
+        "AI Assistant",
+        ui.layout_sidebar(
+            ui.sidebar(
+                qc.ui() 
+            ),
+            # You'll put your charts here later for the other bullet points
+            ui.h2("AI Filtered Data Outputs Will Go Here") 
+        )
+    )
 chat = clt.ChatGithub(model="gpt-4o")
 qc = QueryChat(df, 
                "performance_data", 
