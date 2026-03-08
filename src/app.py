@@ -82,7 +82,6 @@ with ui.nav_panel(
             ui.sidebar(
                 qc.ui() 
             ),
-            # You'll put your charts here later for the other bullet points
             ui.h2("AI Filtered Data Outputs Will Go Here") 
         )
     )
