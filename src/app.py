@@ -22,13 +22,42 @@ t = con.read_parquet(PARQUET_PATH)
 income_order = ["Low", "Medium", "High"]
 involvement_order = ["Low", "Medium", "High"]
 
+def build_system_prompt(style):
+    if style == "beginner":
+        return (
+            "You are an academic performance dashboard assistant. "
+            "Explain results in simple, friendly language for a general audience. "
+            "Avoid technical jargon unless necessary."
+        )
+    elif style == "data_scientist":
+        return (
+            "You are an academic performance dashboard assistant. "
+            "Explain results using concise statistical and analytical language. "
+            "Highlight trends, comparisons, and data limitations where relevant."
+        )
+    elif style == "policy":
+        return (
+            "You are an academic performance dashboard assistant. "
+            "Explain results for decision-makers and policy audiences. "
+            "Focus on actionable takeaways, group differences, and practical implications."
+        )
+    return (
+        "You are an academic performance dashboard assistant. "
+        "Explain the data clearly and helpfully."
+    )
+
 chat = clt.ChatGithub(model="gpt-4o")
 qc = QueryChat(
-    t.execute(), 
+    t.execute(),
     "performance_data",
     client=chat,
     greeting=(
-        "Hello! I can help you explore the Academic Performance dataset. "
+        "Hello! I can help you explore the Academic Performance dataset.\n\n"
+        "Use the Explanation Style selector to control how responses are written.\n\n"
+        "Available styles:\n"
+        "- Beginner: simple, non-technical explanations\n"
+        "- Data Scientist: analytical and statistical language\n"
+        "- Policy Analyst: decision-oriented and actionable summaries\n\n"
         "Try asking things like:\n"
         "- *Show only public school students with an average exam score above 80%*\n"
         "- *Filter to students whose parents have a postgraduate education*\n"
@@ -99,11 +128,26 @@ app_ui = ui.page_fluid(
             "AI Assistant",
             ui.layout_sidebar(
                 ui.sidebar(
+                    ui.input_select(
+                        "explanation_style",
+                        "Explanation Style",
+                        choices={
+                            "beginner": "Beginner",
+                            "data_scientist": "Data Scientist",
+                            "policy": "Policy Analyst",
+                        },
+                        selected="beginner",
+                    ),
+                    ui.markdown(
+                        "Choose how the AI assistant explains results for different audiences."
+                    ),
+                    ui.hr(),
                     qc.ui(),
-                    width = 400
+                    width=400,
                 ),
                 ui.card(
                     ui.card_header("Filtered Data"),
+                    ui.markdown("The AI assistant will respond using the selected explanation style."),
                     ui.output_data_frame("ai_data_table"),
                     ui.download_button("download_ai_output",
                                       "Download dataframe as CSV"),
