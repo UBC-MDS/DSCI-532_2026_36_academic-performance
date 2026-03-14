@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-03-08
+
+### Added
+* **AI Chatbot Integration:** Introduced a new dedicated AI-powered tab within the dashboard featuring a `querychat` interface.
+* **Interactive Chat Components:** * Added a dataframe output component to view data filtered through the AI chat.
+    * Integrated at least two visualization components that dynamically update based on the `querychat` filtered data.
+* **Data Portability:** Added a download button specifically for exporting the data subsets generated via the AI chat interface.
+
+### Changed
+* **Visual Hierarchy Improvements:** * Enlarged KPI value boxes for better visibility and impact.
+    * Updated categorical axis labels (low/medium/high) to a non-rotated format to improve readability.
+* **Layout Optimization:** Refined the dashboard layout to ensure all figures fit within the view without requiring scrolling.
+
 ## [0.2.0] - 2026-02-28
 
 ### Added
