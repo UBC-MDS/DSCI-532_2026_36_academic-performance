@@ -51,6 +51,7 @@ qc = QueryChat(
     t.execute(),
     "performance_data",
     client=chat,
+    extra_instructions=build_system_prompt("beginner"),
     greeting=(
         "Hello! I can help you explore the Academic Performance dataset.\n\n"
         "Use the Explanation Style selector to control how responses are written.\n\n"
@@ -147,6 +148,7 @@ app_ui = ui.page_fluid(
                 ),
                 ui.card(
                     ui.card_header("Filtered Data"),
+                    ui.output_text("style_indicator"),
                     ui.markdown("The AI assistant will respond using the selected explanation style."),
                     ui.output_data_frame("ai_data_table"),
                     ui.download_button("download_ai_output",
@@ -189,6 +191,16 @@ def server(input, output, session):
         q = filtered_query()
         val = q.Attendance.mean().to_pandas()
         return f"{val:.1f}%" if pd.notnull(val) else "N/A"
+    
+    @render.text
+    def style_indicator():
+        style_labels = {
+            "beginner": "Beginner",
+            "data_scientist": "Data Scientist",
+            "policy": "Policy Analyst",
+        }
+        return f"Current explanation style: {style_labels[input.explanation_style()]}"
+
 
     def apply_theme(chart):
         return (
