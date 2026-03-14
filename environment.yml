@@ -12,10 +12,12 @@ dependencies:
   - anywidget
   - vegafusion 
   - vegafusion-python-embed
+  - vl-convert-python
   - jupyterlab
   - ipykernel
   - shiny
   - shinywidgets
+  
   - pip:
       - chatlas
       - querychat
