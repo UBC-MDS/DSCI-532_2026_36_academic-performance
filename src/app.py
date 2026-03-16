@@ -127,6 +127,17 @@ app_ui = ui.page_fluid(
     ),
 )
 
+def filter_student_data(data_table, school_types=None, parent_edu_levels=None):
+    """
+    Filters the student dataset based on school type and parental education.
+    """
+    query = data_table
+    if school_types:
+        query = query.filter(query.School_Type.isin(school_types))
+    if parent_edu_levels:
+        query = query.filter(query.Parental_Education_Level.isin(parent_edu_levels))
+    return query
+
 def server(input, output, session):
     outputs = qc.server()
 
@@ -138,12 +149,7 @@ def server(input, output, session):
 
     @reactive.calc
     def filtered_query():
-        query = t
-        if input.school_type():
-            query = query.filter(t.School_Type.isin(input.school_type()))
-        if input.parent_edu():
-            query = query.filter(t.Parental_Education_Level.isin(input.parent_edu()))
-        return query
+        return filter_student_data(t, input.school_type(), input.parent_edu())
 
     @render.text
     def avg_score():
