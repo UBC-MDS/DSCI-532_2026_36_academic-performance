@@ -45,7 +45,7 @@ conda env create -f environment.yml
 conda activate dsci-532-m1
 
 cd src
-shiny run app.py
+shiny run src/app.py
 ```
 
 ## Project Structure
@@ -61,10 +61,14 @@ DSCI-532_2026_36_academic-performance/
 └── README.md
 ```
 
-## Milestone 2 Status
+## Running Tests
+Run the following command from the root directory of the project to execute the full suite of unit and Playwright tests:
+```bash
+pytest tests/ -v
+```
 
-- Functional dashboard prototype implemented  
-- Shared reactive architecture  
-- Deployed to Posit Connect Cloud (main + dev)  
-- Documentation updated  
-- Release v0.2.0 prepared
+## Team Members
+- Karan Bains
+- Mykhailo Kmetiuk
+- Gurveer Madurai
+- Siting Wang
