@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-03-14
+
+### Added
+- AI Assistant tab powered by QueryChat for natural-language exploration of the dataset
+- Explanation style selector allowing responses tailored to different audiences (Beginner, Data Scientist, Policy Analyst)
+- Download option for AI-generated filtered data tables
+- Dashboard demo GIF added to the README
+- Playwright UI tests for key dashboard interactions
+- pytest unit test for refactored dashboard logic
+
+### Changed
+- Data pipeline migrated from CSV to **Parquet + DuckDB** for faster data access
+- Filtering logic moved to database-level queries using **Ibis + reactive calculations**
+- Improved dashboard layout and documentation clarity
+
+### Fixed
+- Minor issues with filter interactions and data display
+- Small UI adjustments for charts and value boxes
+
+### Known Issues
+- AI assistant explanations may vary depending on prompt interpretation
+- QueryChat responses may require follow-up queries for complex filters
+
+
+## [0.3.0] - 2026-03-08
+
+### Added
+* **AI Chatbot Integration:** Introduced a new dedicated AI-powered tab within the dashboard featuring a `querychat` interface.
+* **Interactive Chat Components:** * Added a dataframe output component to view data filtered through the AI chat.
+    * Integrated at least two visualization components that dynamically update based on the `querychat` filtered data.
+* **Data Portability:** Added a download button specifically for exporting the data subsets generated via the AI chat interface.
+
+### Changed
+* **Visual Hierarchy Improvements:** * Enlarged KPI value boxes for better visibility and impact.
+    * Updated categorical axis labels (low/medium/high) to a non-rotated format to improve readability.
+* **Layout Optimization:** Refined the dashboard layout to ensure all figures fit within the view without requiring scrolling.
+
 ## [0.2.0] - 2026-02-28
 
 ### Added
