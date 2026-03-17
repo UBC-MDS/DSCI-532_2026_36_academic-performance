@@ -8,4 +8,4 @@ vegafusion==2.0.2
 vegafusion-python-embed==1.6.9
 chatlas
 querychat
-ibis-framework[duckdb]>=7.1.0git
+ibis-framework[duckdb]>=7.1.0
