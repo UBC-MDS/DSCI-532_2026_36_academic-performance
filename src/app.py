@@ -117,7 +117,7 @@ app_ui = ui.page_fluid(
                 ),
             ui.layout_columns(
                 ui.value_box("Records Found", ui.output_text("row_count"), theme="info"),
-                ui.value_box("Subset AVG Score", ui.output_text("Xsubset_score"), theme="primary"),
+                ui.value_box("Subset Average Score", ui.output_text("subset_score"), theme="primary"),
                 fill=False),                
             ui.card(
                     ui.card_header("Filtered Data"),
