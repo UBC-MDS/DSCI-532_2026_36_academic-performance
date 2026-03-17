@@ -8,7 +8,7 @@ vegafusion==2.0.2
 vegafusion-python-embed==1.6.9
 
 ibis-framework[duckdb]==12.0.0
-duckdb==0.10.2
+duckdb==0.10.3
 pyarrow==14.0.2
 
 python-dotenv==1.0.1
