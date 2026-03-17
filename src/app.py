@@ -115,7 +115,11 @@ app_ui = ui.page_fluid(
                     qc.ui(),
                     width = 400
                 ),
-                ui.card(
+            ui.layout_columns(
+                ui.value_box("Records Found", ui.output_text("row_count"), theme="info"),
+                ui.value_box("Subset AVG Score", ui.output_text("Xsubset_score"), theme="primary"),
+                fill=False),                
+            ui.card(
                     ui.card_header("Filtered Data"),
                     ui.output_data_frame("ai_data_table"),
                     ui.download_button("download_ai_output",
@@ -168,6 +172,19 @@ def server(input, output, session):
         q = filtered_query()
         val = q.Attendance.mean().to_pandas()
         return f"{val:.1f}%" if pd.notnull(val) else "N/A"
+    
+    @render.text
+    def row_count():
+    df = outputs.df()
+    return f"{len(df)} students"
+
+    @render.text
+    def subset_score():
+    df = outputs.df()
+    if not df.empty and "Exam_Score" in df.columns:
+        val = df["Exam_Score"].mean()
+        return f"{val:.1f}%"
+    return "N/A"
 
     def apply_theme(chart):
         """Applies a unified theme to all Altair charts."""
