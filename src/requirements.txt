@@ -13,5 +13,5 @@ pyarrow==14.0.2
 
 python-dotenv==1.0.1
 
-chatlas==0.3.0
+chatlas==0.13.2
 querychat==0.5.1
