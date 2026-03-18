@@ -28,7 +28,7 @@ income_order = ["Low", "Medium", "High"]
 involvement_order = ["Low", "Medium", "High"]
 
 SCHOOL_TYPE_CHOICES = ["Public", "Private"]
-PARENT_EDU_CHOICES = sorted(t.Parental_Education_Level.execute().unique().tolist())
+PARENT_EDU_CHOICES = ["High School", "College", "Postgraduate"]
 
 chat = clt.ChatGithub(model="gpt-4o")
 qc = QueryChat(
