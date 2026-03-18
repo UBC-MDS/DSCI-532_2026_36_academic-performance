@@ -2,7 +2,7 @@ import pandas as pd
 import altair as alt
 import ibis
 from shiny import App, ui, render, reactive
-from shinywidgets import output_widget, render_widget
+from shinywidgets import output_widget, render_widget, reactive_read
 from pathlib import Path
 from querychat import QueryChat
 import chatlas as clt
@@ -69,6 +69,7 @@ app_ui = ui.page_fluid(
                         selected=PARENT_EDU_CHOICES,
                     ),
                     ui.input_action_button("reset", "Reset Filters", class_="btn-outline-secondary reset-btn"),
+                    ui.output_text("selected_involvement_text"),
                     ui.hr(),
                     ui.markdown("**Authors:** Group Project | **DSCI 532**"),
                     open="desktop",
@@ -100,7 +101,7 @@ app_ui = ui.page_fluid(
                         full_screen=True,
                     ),
                     ui.card(
-                        ui.card_header("Impact of Parental Involvement (with 95% CI)"),
+                        ui.card_header("Impact of Parental Involvement (with 95% CI) !INTERACTIVE! "),
                         output_widget("involvement_bar"),
                         full_screen=True,
                     ),
@@ -144,16 +145,33 @@ def filter_student_data(data_table, school_types=None, parent_edu_levels=None):
 
 def server(input, output, session):
     outputs = qc.server()
+    selected_involvement = reactive.Value(None)
 
     @reactive.effect
     @reactive.event(input.reset)
     def _():
         ui.update_checkbox_group("school_type", selected=SCHOOL_TYPE_CHOICES)
         ui.update_checkbox_group("parent_edu", selected=PARENT_EDU_CHOICES)
+        selected_involvement.set(None)
+
+    @reactive.calc
+    def base_filtered_query():
+        return filter_student_data(t, input.school_type(), input.parent_edu())
 
     @reactive.calc
     def filtered_query():
-        return filter_student_data(t, input.school_type(), input.parent_edu())
+        query = base_filtered_query()
+
+        if selected_involvement.get() is not None:
+            query = query.filter(
+                query.Parental_Involvement == selected_involvement.get()
+            )
+
+        return query
+
+    @reactive.calc
+    def involvement_selection_name():
+        return f"involvement_click_{input.reset()}"
 
     @render.text
     def avg_score():
@@ -242,30 +260,86 @@ def server(input, output, session):
 
     @render_widget
     def involvement_bar():
-        data = filtered_query().select("Parental_Involvement", "Exam_Score").execute()
+        data = base_filtered_query().select("Parental_Involvement", "Exam_Score").execute()
         if data.empty:
-            return alt.Chart(pd.DataFrame()).mark_text()
+            return alt.Chart(pd.DataFrame({"x": [], "y": []})).mark_text(text="No data")
 
         plot_df = data.dropna()
-        
+
+        involvement_click = alt.selection_point(
+            name=involvement_selection_name(),
+            fields=["Parental_Involvement"],
+            empty=True,
+            toggle=False
+        )
+
         base = alt.Chart(plot_df).encode(
-            x=alt.X("Parental_Involvement:N", sort=involvement_order, title="Involvement Level", axis=alt.Axis(labelAngle=0)),
-            color=alt.Color("Parental_Involvement:N", scale=alt.Scale(scheme="viridis"), legend=None)
+            x=alt.X(
+                "Parental_Involvement:N",
+                sort=involvement_order,
+                title="Involvement Level",
+                axis=alt.Axis(labelAngle=0)
+            )
         )
 
         bars = base.mark_bar(size=70, opacity=0.85).encode(
-            y=alt.Y("mean(Exam_Score):Q", title="Average Exam Score", scale=alt.Scale(domain=[50, 80])),
+            y=alt.Y(
+                "mean(Exam_Score):Q",
+                title="Exam Score",
+                scale=alt.Scale(domain=[50, 80])
+                
+            ),
+            color=alt.condition(
+                involvement_click,
+                alt.Color(
+                    "Parental_Involvement:N",
+                    scale=alt.Scale(scheme="viridis"),
+                    legend=None
+                ),
+                alt.value("lightgray")
+            ),
             tooltip=[
                 alt.Tooltip("Parental_Involvement:N", title="Level"),
                 alt.Tooltip("mean(Exam_Score):Q", title="Avg Score", format=".1f")
             ]
         )
 
-        error_bars = base.mark_errorbar(extent='ci', color="#444").encode(
-            y=alt.Y("Exam_Score:Q")
+        error_bars = base.mark_errorbar(extent="ci", color="#444").encode(
+            y=alt.Y("Exam_Score:Q", title="Exam Score")
         )
 
-        return apply_theme(bars + error_bars)
+        chart = (bars + error_bars).add_params(involvement_click)
+
+        return apply_theme(chart)
+
+
+    @reactive.effect
+    def _():
+        sel = reactive_read(involvement_bar.widget.selections, involvement_selection_name())
+        val = getattr(sel, "value", None)
+
+
+        if not val:
+            selected_involvement.set(None)
+        elif isinstance(val, list):
+            if len(val) > 0:
+                first = val[0]
+                if isinstance(first, dict):
+                    selected_involvement.set(first.get("Parental_Involvement"))
+                else:
+                    selected_involvement.set(first)
+            else:
+                selected_involvement.set(None)
+        elif isinstance(val, dict):
+            selected_involvement.set(val.get("Parental_Involvement"))
+        else:
+            selected_involvement.set(val)
+
+        print("selected_involvement =", selected_involvement.get())
+
+    @render.text
+    def selected_involvement_text():
+        return f"Selected involvement: {selected_involvement.get()}"
 
     @render_widget
     def attendance_scatter():
