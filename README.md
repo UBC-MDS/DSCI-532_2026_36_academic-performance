@@ -22,6 +22,7 @@ This project develops an interactive dashboard using **Shiny for Python** to exp
 The dashboard supports:
 
 - Filtering students by **School Type** and **Parental Education Level**
+- Filtering students by **Parental Involvment Level**. To filter click on corresponding bar on **Impact of Parental Involvement (with 95% CI) !INTERACTIVE!** bar chart.
 - Viewing real-time KPI summaries:
   - Average Exam Score
   - Average Hours Studied
@@ -29,7 +30,7 @@ The dashboard supports:
 - Exploring relationships between:
   - Study habits and exam performance (scatter + LOESS)
   - Family income and score distribution (boxplot)
-  - Parental involvement and average performance (bar chart)
+  - Parental involvement and average performance (bar chart) - Interactive! Click on each bar to filter.
 
 The goal is to support data-driven educational decision-making for school administrators and families. The dashboard is publicly deployed on Posit Connect Cloud.
 
