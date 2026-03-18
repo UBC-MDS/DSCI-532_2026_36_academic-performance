@@ -2,7 +2,7 @@ import pandas as pd
 import altair as alt
 import ibis
 from shiny import App, ui, render, reactive
-from shinywidgets import output_widget, render_widget
+from shinywidgets import output_widget, render_widget, reactive_read
 from pathlib import Path
 from querychat import QueryChat
 import chatlas as clt
@@ -11,7 +11,12 @@ import os
 
 load_dotenv()
 
+# theme constants
 alt.data_transformers.disable_max_rows()
+
+THEME_COLOR = "#21918c"
+TREND_COLOR = "#e74c3c"
+GRID_COLOR = "#f0f0f0"
 
 APP_DIR = Path(__file__).resolve().parent
 PARQUET_PATH = APP_DIR.parent / "data" / "processed" / "StudentPerformanceFactors.parquet"
@@ -21,6 +26,9 @@ t = con.read_parquet(PARQUET_PATH)
 
 income_order = ["Low", "Medium", "High"]
 involvement_order = ["Low", "Medium", "High"]
+
+SCHOOL_TYPE_CHOICES = ["Public", "Private"]
+PARENT_EDU_CHOICES = ["High School", "College", "Postgraduate"]
 
 chat = clt.ChatGithub(model="gpt-4o")
 qc = QueryChat(
@@ -37,6 +45,10 @@ qc = QueryChat(
 )
 
 app_ui = ui.page_fluid(
+    ui.tags.style("""
+        .bslib-value-box.bg-primary { background-color: #f8f9fa !important; color: #212529 !important; }
+        .reset-btn { width: 100%; margin-top: 10px; }
+    """),
     ui.panel_title("Academic Performance Dashboard"),
     ui.navset_tab(
         ui.nav_panel(
@@ -47,23 +59,25 @@ app_ui = ui.page_fluid(
                     ui.input_checkbox_group(
                         "school_type",
                         "School Type",
-                        choices=["Public", "Private"],
-                        selected=["Public", "Private"],
+                        choices=SCHOOL_TYPE_CHOICES,
+                        selected=SCHOOL_TYPE_CHOICES,
                     ),
                     ui.input_checkbox_group(
                         "parent_edu",
                         "Parental Education Level",
-                        choices=sorted(t.Parental_Education_Level.execute().unique().tolist()),
-                        selected=sorted(t.Parental_Education_Level.execute().unique().tolist()),
+                        choices=PARENT_EDU_CHOICES,
+                        selected=PARENT_EDU_CHOICES,
                     ),
+                    ui.input_action_button("reset", "Reset Filters", class_="btn-outline-secondary reset-btn"),
+                    ui.output_text("selected_involvement_text"),
                     ui.hr(),
                     ui.markdown("**Authors:** Group Project | **DSCI 532**"),
                     open="desktop",
                 ),
                 ui.layout_columns(
-                    ui.value_box("AVG Exam Score", ui.output_text("avg_score"), theme="primary"),
-                    ui.value_box("AVG Hours Studied", ui.output_text("avg_hours")),
-                    ui.value_box("AVG Attendance", ui.output_text("avg_attendance")),
+                    ui.value_box("AVG Exam Score", ui.output_text("avg_score"), theme="light"),
+                    ui.value_box("AVG Hours Studied", ui.output_text("avg_hours"), theme="light"),
+                    ui.value_box("AVG Attendance", ui.output_text("avg_attendance"), theme="light"),
                     fill=False,
                 ),
                 ui.layout_columns(
@@ -87,7 +101,7 @@ app_ui = ui.page_fluid(
                         full_screen=True,
                     ),
                     ui.card(
-                        ui.card_header("Impact of Parental Involvement"),
+                        ui.card_header("Impact of Parental Involvement (with 95% CI) !INTERACTIVE! "),
                         output_widget("involvement_bar"),
                         full_screen=True,
                     ),
@@ -102,7 +116,11 @@ app_ui = ui.page_fluid(
                     qc.ui(),
                     width = 400
                 ),
-                ui.card(
+            ui.layout_columns(
+                ui.value_box("Records Found", ui.output_text("row_count"), theme="info"),
+                ui.value_box("Subset Average Score", ui.output_text("subset_score"), theme="primary"),
+                fill=False),                
+            ui.card(
                     ui.card_header("Filtered Data"),
                     ui.output_data_frame("ai_data_table"),
                     ui.download_button("download_ai_output",
@@ -114,19 +132,46 @@ app_ui = ui.page_fluid(
     ),
 )
 
+def filter_student_data(data_table, school_types=None, parent_edu_levels=None):
+    """
+    Filters the student dataset based on school type and parental education.
+    """
+    query = data_table
+    if school_types:
+        query = query.filter(query.School_Type.isin(school_types))
+    if parent_edu_levels:
+        query = query.filter(query.Parental_Education_Level.isin(parent_edu_levels))
+    return query
 
 def server(input, output, session):
     outputs = qc.server()
+    selected_involvement = reactive.Value(None)
+
+    @reactive.effect
+    @reactive.event(input.reset)
+    def _():
+        ui.update_checkbox_group("school_type", selected=SCHOOL_TYPE_CHOICES)
+        ui.update_checkbox_group("parent_edu", selected=PARENT_EDU_CHOICES)
+        selected_involvement.set(None)
+
+    @reactive.calc
+    def base_filtered_query():
+        return filter_student_data(t, input.school_type(), input.parent_edu())
 
     @reactive.calc
     def filtered_query():
-        query = t
-        if input.school_type():
-            query = query.filter(t.School_Type.isin(input.school_type()))
-        if input.parent_edu():
-            query = query.filter(t.Parental_Education_Level.isin(input.parent_edu()))
-        
+        query = base_filtered_query()
+
+        if selected_involvement.get() is not None:
+            query = query.filter(
+                query.Parental_Involvement == selected_involvement.get()
+            )
+
         return query
+
+    @reactive.calc
+    def involvement_selection_name():
+        return f"involvement_click_{input.reset()}"
 
     @render.text
     def avg_score():
@@ -145,12 +190,33 @@ def server(input, output, session):
         q = filtered_query()
         val = q.Attendance.mean().to_pandas()
         return f"{val:.1f}%" if pd.notnull(val) else "N/A"
+    
+    @render.text
+    def row_count():
+        df = outputs.df()
+        return f"{len(df)} students"
+
+    @render.text
+    def subset_score():
+        df = outputs.df()
+        if not df.empty and "Exam_Score" in df.columns:
+            val = df["Exam_Score"].mean()
+            return f"{val:.1f}%"
+        return "N/A"
 
     def apply_theme(chart):
+        """Applies a unified theme to all Altair charts."""
         return (
-            chart.properties(width="container")
-            .configure_axis(labelFontSize=14, titleFontSize=16)
+            chart.properties(width="container", height=300)
+            .configure_axis(
+                labelFontSize=12, 
+                titleFontSize=14, 
+                gridColor=GRID_COLOR,
+                titleFontWeight=600,
+                labelColor="#666"
+            )
             .configure_view(strokeWidth=0)
+            .configure_legend(titleFontSize=12, labelFontSize=11)
         )
 
     @render_widget
@@ -163,9 +229,13 @@ def server(input, output, session):
         base = alt.Chart(plot_df).encode(
             x=alt.X("Hours_Studied:Q", title="Hours Studied"),
             y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[40, 100])),
+            tooltip=[
+                alt.Tooltip("Hours_Studied:Q", title="Hours"),
+                alt.Tooltip("Exam_Score:Q", title="Score", format=".1f")
+            ]
         )
-        scatter = base.mark_circle(opacity=0.4, color="#21918c")
-        line = base.transform_loess("Hours_Studied", "Exam_Score").mark_line(color="red", size=3)
+        scatter = base.mark_circle(opacity=0.4, color=THEME_COLOR, size=60)
+        line = base.transform_loess("Hours_Studied", "Exam_Score").mark_line(color=TREND_COLOR, size=3)
         return apply_theme(scatter + line)
 
     @render_widget
@@ -176,27 +246,100 @@ def server(input, output, session):
 
         plot_df = data.dropna()
         chart = alt.Chart(plot_df).mark_boxplot(
-            extent="min-max", size=60, clip=True
+            extent="min-max", size=50, clip=True
         ).encode(
             x=alt.X("Family_Income:N", sort=income_order, title="Family Income", axis=alt.Axis(labelAngle=0)),
-            y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[55, 80])),
+            y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[40, 100])),
             color=alt.Color("Family_Income:N", scale=alt.Scale(scheme="viridis"), legend=None),
+            tooltip=[
+                alt.Tooltip("Family_Income:N", title="Income Group"),
+                alt.Tooltip("median(Exam_Score):Q", title="Median Score", format=".1f")
+            ]
         )
         return apply_theme(chart)
 
     @render_widget
     def involvement_bar():
-        data = filtered_query().select("Parental_Involvement", "Exam_Score").execute()
+        data = base_filtered_query().select("Parental_Involvement", "Exam_Score").execute()
         if data.empty:
-            return alt.Chart(pd.DataFrame()).mark_text()
+            return alt.Chart(pd.DataFrame({"x": [], "y": []})).mark_text(text="No data")
 
         plot_df = data.dropna()
-        chart = alt.Chart(plot_df).mark_bar(size=80).encode(
-            x=alt.X("Parental_Involvement:N", sort=involvement_order, title="Involvement Level", axis=alt.Axis(labelAngle=0)),
-            y=alt.Y("mean(Exam_Score):Q", title="Average Exam Score", scale=alt.Scale(domain=[60, 72])),
-            color=alt.Color("Parental_Involvement:N", scale=alt.Scale(scheme="viridis"), legend=None),
+
+        involvement_click = alt.selection_point(
+            name=involvement_selection_name(),
+            fields=["Parental_Involvement"],
+            empty=True,
+            toggle=False
         )
+
+        base = alt.Chart(plot_df).encode(
+            x=alt.X(
+                "Parental_Involvement:N",
+                sort=involvement_order,
+                title="Involvement Level",
+                axis=alt.Axis(labelAngle=0)
+            )
+        )
+
+        bars = base.mark_bar(size=70, opacity=0.85).encode(
+            y=alt.Y(
+                "mean(Exam_Score):Q",
+                title="Exam Score",
+                scale=alt.Scale(domain=[50, 80])
+                
+            ),
+            color=alt.condition(
+                involvement_click,
+                alt.Color(
+                    "Parental_Involvement:N",
+                    scale=alt.Scale(scheme="viridis"),
+                    legend=None
+                ),
+                alt.value("lightgray")
+            ),
+            tooltip=[
+                alt.Tooltip("Parental_Involvement:N", title="Level"),
+                alt.Tooltip("mean(Exam_Score):Q", title="Avg Score", format=".1f")
+            ]
+        )
+
+        error_bars = base.mark_errorbar(extent="ci", color="#444").encode(
+            y=alt.Y("Exam_Score:Q", title="Exam Score")
+        )
+
+        chart = (bars + error_bars).add_params(involvement_click)
+
         return apply_theme(chart)
+
+
+    @reactive.effect
+    def _():
+        sel = reactive_read(involvement_bar.widget.selections, involvement_selection_name())
+        val = getattr(sel, "value", None)
+
+
+        if not val:
+            selected_involvement.set(None)
+        elif isinstance(val, list):
+            if len(val) > 0:
+                first = val[0]
+                if isinstance(first, dict):
+                    selected_involvement.set(first.get("Parental_Involvement"))
+                else:
+                    selected_involvement.set(first)
+            else:
+                selected_involvement.set(None)
+        elif isinstance(val, dict):
+            selected_involvement.set(val.get("Parental_Involvement"))
+        else:
+            selected_involvement.set(val)
+
+        print("selected_involvement =", selected_involvement.get())
+
+    @render.text
+    def selected_involvement_text():
+        return f"Selected involvement: {selected_involvement.get()}"
 
     @render_widget
     def attendance_scatter():
@@ -208,9 +351,13 @@ def server(input, output, session):
         base = alt.Chart(plot_df).encode(
             x=alt.X("Attendance:Q", title="Attendance (%)", scale=alt.Scale(domain=[60, 100])),
             y=alt.Y("Exam_Score:Q", title="Exam Score", scale=alt.Scale(domain=[40, 100])),
+            tooltip=[
+                alt.Tooltip("Attendance:Q", title="Attendance %"),
+                alt.Tooltip("Exam_Score:Q", title="Score", format=".1f")
+            ]
         )
-        scatter = base.mark_circle(opacity=0.4, color="#21918c")
-        line = base.transform_loess("Attendance", "Exam_Score").mark_line(color="red", size=3)
+        scatter = base.mark_circle(opacity=0.4, color=THEME_COLOR, size=60)
+        line = base.transform_loess("Attendance", "Exam_Score").mark_line(color=TREND_COLOR, size=3)
         return apply_theme(scatter + line)
 
     @render.data_frame

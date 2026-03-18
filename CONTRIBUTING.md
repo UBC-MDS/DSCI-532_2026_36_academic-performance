@@ -71,4 +71,22 @@ If you encounter bugs or have feature suggestions:
 
 ---
 
+## Milestone 3 Retrospective
+
+During Milestone 3, our team focused on improving collaboration through a structured Git workflow and clearer task division.
+
+### What worked well
+- Using feature branches for each component allowed parallel development.
+- Pull request reviews helped catch issues early and improved code quality.
+- The `dev` branch provided a stable integration point before releasing to `main`.
+
+### What we improved for Milestone 4
+- We introduced clearer task ownership for data engineering, AI features, testing, and release management.
+- We prioritized addressing feedback earlier in the milestone using a shared feedback tracking issue.
+- We improved documentation and release management to ensure smoother final deployment.
+
+This retrospective helps guide our development workflow for future milestones and ensures consistent collaboration practices.
+
+---
+
 Thank you for contributing!
