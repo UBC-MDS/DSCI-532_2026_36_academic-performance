@@ -22,7 +22,7 @@ This project develops an interactive dashboard using **Shiny for Python** to exp
 The dashboard supports:
 
 - Filtering students by **School Type** and **Parental Education Level**
-- Filtering students by **Parental Involvment Level**. To filter click on corresponding bar on **Impact of Parental Involvement (with 95% CI) !INTERACTIVE!** bar chart.
+- Filtering students by **Parental Involvment Level**. To filter click on corresponding bar on **Impact of Parental Involvement** bar chart.
 - Viewing real-time KPI summaries:
   - Average Exam Score
   - Average Hours Studied
