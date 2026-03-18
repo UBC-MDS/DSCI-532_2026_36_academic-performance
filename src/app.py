@@ -175,16 +175,16 @@ def server(input, output, session):
     
     @render.text
     def row_count():
-    df = outputs.df()
-    return f"{len(df)} students"
+        df = outputs.df()
+        return f"{len(df)} students"
 
     @render.text
     def subset_score():
-    df = outputs.df()
-    if not df.empty and "Exam_Score" in df.columns:
-        val = df["Exam_Score"].mean()
-        return f"{val:.1f}%"
-    return "N/A"
+        df = outputs.df()
+        if not df.empty and "Exam_Score" in df.columns:
+            val = df["Exam_Score"].mean()
+            return f"{val:.1f}%"
+        return "N/A"
 
     def apply_theme(chart):
         """Applies a unified theme to all Altair charts."""
